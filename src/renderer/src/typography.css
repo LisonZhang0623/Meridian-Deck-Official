@@ -1,0 +1,53 @@
+#app {
+  width: calc(100% / var(--ui-scale, 1));
+  height: calc(100% / var(--ui-scale, 1));
+  zoom: var(--ui-scale, 1);
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.workspace-title > .muted,
+.phase-label,
+.statusbar,
+.cached-note,
+.terminal-toolbar,
+.transfer-detail small,
+.path-input input {
+  font-size: 11.5px;
+}
+
+.server-view-switch > button,
+.server-view-switch > button > span,
+.server-tag-filters > button,
+.server-profile-tags > span,
+.server-last-connected,
+.server-select small {
+  font-size: 11px;
+}
+
+.server-row > .icon-button,
+.server-browser .server-search .icon-button,
+.session-tab .tab-close,
+.document-tab .tab-close {
+  min-width: 24px;
+  min-height: 24px;
+}
+
+.server-search:focus-within,
+.logs-search:focus-within {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 1px var(--blue);
+}
+
+select:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+.danger-button:hover:not(:disabled) {
+  background: var(--danger);
+  filter: brightness(.92);
+}

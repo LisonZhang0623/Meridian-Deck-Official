@@ -1,0 +1,47 @@
+# Dependencies and generated output
+node_modules/
+out/
+release/
+dist/
+coverage/
+.cache/
+.test-data/
+*.log
+*.tsbuildinfo
+*.zip
+*.7z
+*.exe
+*.test
+*.syso
+!/sshtool_windows_amd64.syso
+
+# Local environment, credentials and runtime data
+.env*
+!.env.example
+.ssh/
+.aws/
+.codex/
+.agents/
+*.pem
+*.key
+*.ppk
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+id_ecdsa*
+id_dsa*
+known_hosts*
+/settings.json
+/commands.json
+
+# Editor and OS files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.lnk
+*.swp
+*.swo
+*~

@@ -1,0 +1,169 @@
+.app-body {
+  container-type: inline-size;
+}
+
+.sidebar-rail {
+  order: -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 0 0 46px;
+  margin-right: var(--island-gap);
+  padding: 6px 5px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-island);
+  background: var(--bg-surface);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.sidebar-right .sidebar-rail {
+  order: 3;
+  margin-right: 0;
+  margin-left: var(--island-gap);
+}
+
+.sidebar-rail-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  width: 100%;
+}
+
+.sidebar-rail-divider {
+  width: 20px;
+  height: 1px;
+  background: var(--border);
+  margin: 6px 0;
+  flex-shrink: 0;
+}
+
+.sidebar-rail-footer {
+  margin-top: auto;
+  padding-top: 6px;
+  border-top: 1px solid var(--border-soft);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  width: 100%;
+}
+
+.sidebar-rail-button {
+  position: relative;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  min-height: 34px;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--muted);
+}
+
+.sidebar-rail-button:hover:not(:disabled) {
+  background: var(--highlight);
+  color: var(--text);
+}
+
+.sidebar-rail-button.active {
+  background: var(--highlight);
+  color: var(--blue);
+}
+
+.sidebar-rail-button:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: -2px;
+}
+
+.rail-update-dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--blue);
+}
+
+.app-shell .app-body > .sidebar {
+  --sidebar-default-width: 280px;
+  --sidebar-rail-space: 54px;
+  width: min(var(--sidebar-width, var(--sidebar-default-width)), 640px);
+  min-width: min(236px, 45%);
+  max-width: max(45%, calc(100% - var(--sidebar-rail-space) - var(--island-gap) - 290px));
+}
+
+.app-shell .app-body > .sidebar:is(.tools-sidebar, .gpu-sidebar) {
+  --sidebar-default-width: 360px;
+}
+
+.sidebar .servers-section {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+  border-bottom: 0;
+}
+
+.sidebar-heading-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.sidebar .file-tools {
+  flex-wrap: wrap;
+}
+
+/* Invisible island-gap resize handle that glows porcelain-blue on hover/drag */
+.sidebar-resize {
+  position: relative;
+  flex: 0 0 var(--island-gap);
+  background: transparent;
+  cursor: col-resize;
+  touch-action: none;
+  user-select: none;
+}
+
+.sidebar-resize::after {
+  position: absolute;
+  top: 12px;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  border-radius: 99px;
+  background: transparent;
+  content: '';
+  transition: background-color var(--transition-fast);
+}
+
+.sidebar-resize:hover::after,
+.sidebar-resize:focus-visible::after,
+.sidebar-resize.dragging::after {
+  background: var(--blue);
+}
+
+.sidebar-resize:focus-visible {
+  outline: none;
+}
+
+.sidebar-right .main-workspace {
+  order: 0;
+}
+
+.sidebar-right .sidebar-resize {
+  order: 1;
+}
+
+@container (max-width: 1080px) {
+  .app-shell .app-body > .sidebar {
+    --sidebar-default-width: 250px;
+  }
+  .app-shell .app-body > .sidebar:is(.tools-sidebar, .gpu-sidebar) {
+    --sidebar-default-width: 330px;
+  }
+}

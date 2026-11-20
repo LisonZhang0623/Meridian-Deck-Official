@@ -1,0 +1,74 @@
+{
+  "name": "meridian-deck",
+  "version": "1.0.0",
+  "description": "Vue + Wails SSH / SFTP desktop workbench",
+  "author": "Meridian Deck",
+  "private": true,
+  "license": "Apache-2.0",
+  "main": "out/main/index.js",
+  "scripts": {
+    "dev": "npm run build:frontend && go run .",
+    "start": "go run .",
+    "typecheck": "vue-tsc --noEmit",
+    "build:frontend": "npm run typecheck && vite build --config vite.wails.config.mts",
+    "build": "npm run build:frontend && node scripts/build.mjs",
+    "test": "npm run test:frontend && npm run test:go",
+    "test:frontend": "vitest run",
+    "test:go": "go test ./internal/...",
+    "pack": "npm run build",
+    "dist": "npm run build",
+    "build:electron": "electron-vite build"
+  },
+  "build": {
+    "appId": "local.sshtool.workbench",
+    "productName": "Meridian Deck",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "out/**/*",
+      "package.json"
+    ],
+    "asar": true,
+    "npmRebuild": false,
+    "win": {
+      "target": "portable",
+      "icon": "assets/meridian-deck-icon-porcelain-blue.ico",
+      "signAndEditExecutable": false
+    },
+    "portable": {
+      "artifactName": "Meridian-Deck-${version}-${arch}.exe"
+    }
+  },
+  "dependencies": {
+    "@codemirror/commands": "6.11.1",
+    "@codemirror/language": "6.13.1",
+    "@codemirror/language-data": "6.5.2",
+    "@codemirror/search": "6.7.2",
+    "@codemirror/state": "6.7.6",
+    "@codemirror/view": "6.43.15",
+    "@lezer/highlight": "1.2.5",
+    "@lezer/markdown": "1.8.1",
+    "@lucide/vue": "1.67.0",
+    "@wailsio/runtime": "3.1.0",
+    "@xterm/addon-fit": "0.11.0",
+    "@xterm/addon-search": "0.16.0",
+    "@xterm/xterm": "6.0.0",
+    "codemirror": "6.0.2",
+    "katex": "0.19.1",
+    "vue": "3.5.44"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.6",
+    "@types/ssh2": "1.15.6",
+    "@vitejs/plugin-vue": "6.0.10",
+    "electron": "45.2.1",
+    "electron-builder": "26.18.0",
+    "electron-vite": "6.0.0",
+    "ssh2": "1.17.0",
+    "typescript": "6.0.3",
+    "vite": "8.3.5",
+    "vitest": "5.1.0",
+    "vue-tsc": "3.3.14"
+  }
+}

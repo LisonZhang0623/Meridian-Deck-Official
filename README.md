@@ -20,6 +20,7 @@
   <a href="#快速开始">快速开始</a> ·
   <a href="#主要功能">主要功能</a> ·
   <a href="https://github.com/LisonZhang0623/Meridian-Deck-Official/releases">版本说明</a> ·
+  <a href="#本地开发">从源码构建</a> ·
   <a href="#文档与反馈">问题反馈</a>
 </p>
 
@@ -33,7 +34,7 @@
 | macOS（Apple Silicon） | [Meridian-Deck-1.0.0-macos-arm64.zip](https://github.com/LisonZhang0623/Meridian-Deck-Official/releases/download/v1.0.0/Meridian-Deck-1.0.0-macos-arm64.zip) | 解压后打开 `Meridian Deck.app` |
 | Linux x64 | [Meridian-Deck-1.0.0-linux-x64.tar.gz](https://github.com/LisonZhang0623/Meridian-Deck-Official/releases/download/v1.0.0/Meridian-Deck-1.0.0-linux-x64.tar.gz) | 解压后在包内目录运行 `./Meridian-Deck`，需要 GTK 4 和 WebKitGTK 6.0 |
 
-目前应用内更新检查使用私有源码仓库。公开下载用户可在[最新正式版](https://github.com/LisonZhang0623/Meridian-Deck-Official/releases/latest)查看更新。
+在「帮助 → 检查更新」可直接查看[公开仓库的最新正式版](https://github.com/LisonZhang0623/Meridian-Deck-Official/releases/latest)。旧版用户可从上表手动下载本次重新构建的 v1.0.0。
 
 ## 快速开始
 
@@ -51,6 +52,24 @@
 - **命令和隧道**支持带参数的常用命令收藏，以及本地 TCP、远程 TCP、动态 SOCKS5、反向 SOCKS5 和本机 HTTP 代理共享。服务器配置和界面偏好可导入或导出为 JSON。
 
 Windows 提供 DPAPI 凭据存储和原生文件拖出。macOS 与 Linux 使用系统保存对话框下载。
+
+## 本地开发
+
+安装 Go 1.27 或更高版本、Node.js 24 和 npm 11。Windows 使用 WebView2 Evergreen。Linux 构建需要 GTK 4、WebKitGTK 6.0、X11 开发库、C 编译器和 pkg-config。macOS 打包使用 Xcode 命令行工具。
+
+```bash
+git clone https://github.com/LisonZhang0623/Meridian-Deck-Official.git
+cd Meridian-Deck-Official
+npm ci
+npm test
+npm run build
+```
+
+桌面包生成在 `release/1.0.0/`。运行 `npm run dev` 可从源码启动。SSH 和 SFTP 集成测试在本机回环地址运行，测试会临时生成账号和密钥。
+
+应用从 `main.go` 启动，Go 服务位于 `internal/`，Vue 界面位于 `src/renderer/`。旧 Electron 代码参与回归测试。构建参数和依赖版本见 `scripts/build.mjs`、`go.mod` 和 `package-lock.json`。
+
+项目源码采用 [Apache License 2.0](LICENSE)。第三方依赖沿用各自的许可证。
 
 ## 文档与反馈
 

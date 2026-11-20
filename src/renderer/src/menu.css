@@ -1,0 +1,126 @@
+.workbench-menubar {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+}
+
+.workbench-menu {
+  position: relative;
+}
+
+.menu-trigger {
+  border: 0;
+  background: transparent;
+  min-height: 26px;
+  padding: 3px 9px;
+  border-radius: var(--radius-control);
+  font-size: 11.5px;
+  color: var(--text);
+}
+
+.menu-trigger:hover:not(:disabled),
+.menu-trigger.active {
+  background: var(--highlight);
+  color: var(--blue);
+}
+
+.workbench-menu-panel {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  min-width: 232px;
+  padding: 5px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--bg-canvas);
+  box-shadow: 0 12px 32px var(--shadow);
+  z-index: 30;
+}
+
+.workbench-menu-panel > button {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  gap: 8px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  text-align: left;
+  white-space: nowrap;
+  min-height: 28px;
+  padding: 6px 10px 6px 6px;
+  font-size: 11.5px;
+}
+
+.workbench-menu-panel > button:hover:not(:disabled),
+.workbench-menu-panel > button:focus-visible {
+  background: var(--highlight);
+  color: var(--blue);
+}
+
+.workbench-menu-panel > button:focus-visible {
+  outline-offset: -2px;
+}
+
+.workbench-menu-panel hr {
+  margin: 4px 6px;
+  border: 0;
+  border-top: 1px solid var(--border-soft);
+}
+
+.menu-check {
+  display: inline-flex;
+  width: 15px;
+  flex-shrink: 0;
+  color: var(--blue);
+}
+
+.workbench-menu-panel kbd {
+  margin-left: auto;
+  padding-left: 18px;
+  font: 10.5px var(--font-mono);
+  color: var(--muted);
+}
+
+.credentials-dialog {
+  width: 440px;
+}
+
+.credentials-dialog .dialog-body p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.credentials-dialog .dialog-header p {
+  overflow-wrap: anywhere;
+}
+
+.font-sample {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--bg-surface);
+  overflow-x: auto;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  line-height: 1.6;
+}
+
+.font-sample span {
+  color: var(--muted);
+}
+
+@media (max-width: 750px) {
+  .topbar {
+    gap: 6px;
+    padding-inline: 8px;
+  }
+  .menu-trigger {
+    padding-inline: 6px;
+  }
+  .workbench-menu:last-child .workbench-menu-panel {
+    left: auto;
+    right: 0;
+  }
+}

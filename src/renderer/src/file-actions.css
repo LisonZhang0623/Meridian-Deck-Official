@@ -1,0 +1,21 @@
+.file-row .file-entry-name {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.drag-file-status {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.drag-file-status.ready {
+  color: var(--green);
+}
+
+.drag-file-status.failed {
+  color: var(--danger);
+}

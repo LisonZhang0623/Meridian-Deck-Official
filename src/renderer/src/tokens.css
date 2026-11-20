@@ -1,0 +1,124 @@
+/* Meridian Deck Design Tokens — Obsidian Islands × Porcelain Blue (V1.0.0)
+ * Reference: doc/ui-style-guide.md
+ */
+
+.app-shell {
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Cascadia Code', 'SF Mono', Consolas, monospace;
+
+  --radius-dialog: 12px;
+  --radius-island: 10px;
+  --radius-card: 8px;
+  --radius-control: 6px;
+  --radius-pill: 999px;
+
+  --island-gap: 7px;
+  --transition-fast: 140ms ease;
+
+  /* Light Theme Surface & Semantic Tokens */
+  --bg-shell: #e8edf5;
+  --bg-canvas: #ffffff;
+  --bg-surface: #f8fafd;
+  --bg-surface-2: #eef2f8;
+  --background: var(--bg-canvas);
+  --surface: var(--bg-surface);
+  --border: #d5deeb;
+  --border-soft: #e6ecf5;
+  --text: #111827;
+  --muted: #5b677b;
+  --blue: #2558b8;
+  --highlight: #e6effe;
+  --selection: #bed0ee;
+  --primary: #1f4fa8;
+  --primary-text: #ffffff;
+  --green: #16794c;
+  --green-soft: #e6f7ef;
+  --amber: #b4690e;
+  --amber-soft: #fef6e6;
+  --danger: #c62f40;
+  --error-bg: #fef2f2;
+  --shadow: rgba(17, 24, 39, 0.14);
+  --term-bg: #fcfdff;
+
+  /* Light Theme Syntax Tokens */
+  --syntax-keyword: #69388d;
+  --syntax-string: #1a6644;
+  --syntax-number: #8b411b;
+  --syntax-type: #146372;
+  --syntax-function: #1f55a6;
+  --syntax-property: #784561;
+  --syntax-comment: #5b677b;
+  --syntax-punctuation: #465366;
+
+  color-scheme: light;
+}
+
+.app-shell[data-theme="dark"] {
+  /* Dark Theme Surface & Semantic Tokens */
+  --bg-shell: #0a0c10;
+  --bg-canvas: #12161f;
+  --bg-surface: #151a24;
+  --bg-surface-2: #1c2331;
+  --background: var(--bg-canvas);
+  --surface: var(--bg-surface);
+  --border: #252e3f;
+  --border-soft: #1f2736;
+  --text: #edf2fb;
+  --muted: #8a97ae;
+  --blue: #5b9cf6;
+  --highlight: rgba(91, 156, 246, 0.14);
+  --selection: #294b79;
+  --primary: #3574e2;
+  --primary-text: #ffffff;
+  --green: #34d399;
+  --green-soft: rgba(52, 211, 153, 0.14);
+  --amber: #fbbf24;
+  --amber-soft: rgba(251, 191, 36, 0.14);
+  --danger: #fb7185;
+  --error-bg: rgba(251, 113, 133, 0.13);
+  --shadow: rgba(0, 0, 0, 0.42);
+  --term-bg: #10141c;
+
+  /* Dark Theme Syntax Tokens */
+  --syntax-keyword: #e2b8fa;
+  --syntax-string: #9ad8a6;
+  --syntax-number: #f7c69e;
+  --syntax-type: #7dd3e4;
+  --syntax-function: #8fc1ff;
+  --syntax-property: #f1b7cf;
+  --syntax-comment: #8593aa;
+  --syntax-punctuation: #a9b6cb;
+
+  color-scheme: dark;
+}
+
+/* Unified slim scrollbars for WebView2 / WKWebView */
+.app-shell ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.app-shell ::-webkit-scrollbar-track {
+  background: transparent;
+}
+.app-shell ::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 99px;
+}
+.app-shell ::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+.app-shell ::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+@media (max-width: 750px) {
+  .app-shell {
+    --island-gap: 5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-shell {
+    --transition-fast: 0ms;
+  }
+}

@@ -1,0 +1,5 @@
+// Regenerate with: windres -F pe-x86-64 -i scripts/windows-dialogs.rc -O coff -o sshtool_windows_amd64.syso
+1 24 "scripts/windows-dialogs.manifest"
+// Wails loads icon group 3 for the window and notification area.
+// The 16–64 px frames use tighter framing for the Windows taskbar.
+3 ICON "assets/meridian-deck-icon-porcelain-blue.ico"

@@ -1,0 +1,245 @@
+.commands-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.command-scope {
+  margin: 7px 8px 6px;
+}
+
+.command-list {
+  flex: 1;
+  min-height: 70px;
+  overflow: auto;
+  padding: 0 6px 6px;
+}
+
+.command-item {
+  display: flex;
+  align-items: center;
+  border-radius: var(--radius-control);
+  padding-right: 4px;
+  margin-bottom: 2px;
+  transition: background-color var(--transition-fast);
+}
+
+.command-item:hover {
+  background: var(--highlight);
+}
+
+.command-item.selected {
+  background: var(--highlight);
+}
+
+.command-select {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  gap: 2px;
+  padding: 7px 8px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+}
+
+.command-select:hover:not(:disabled) {
+  background: transparent;
+}
+
+.command-select strong {
+  font-size: 11.5px;
+  font-weight: 500;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.command-item.selected .command-select strong {
+  color: var(--blue);
+  font-weight: 600;
+}
+
+.command-select small {
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.command-item-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  flex-shrink: 0;
+}
+
+.command-item .icon-button {
+  min-width: 24px;
+  min-height: 24px;
+  padding: 3px;
+}
+
+.command-form-scroll {
+  overflow: auto;
+  min-height: 0;
+}
+
+.command-form {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  padding: 10px 12px 14px;
+}
+
+.command-form h3 {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.command-form label,
+.command-parameter {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.command-form textarea,
+.command-form select,
+.command-form input,
+.command-parameter input {
+  width: 100%;
+  font-size: 11.5px;
+  color: var(--text);
+}
+
+.command-form textarea {
+  resize: vertical;
+  background: var(--bg-canvas);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  padding: 8px;
+  font: 11.5px/1.6 var(--font-mono);
+}
+
+.command-form-pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 9px;
+}
+
+.command-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 7px;
+}
+
+.command-form-actions button {
+  font-size: 11.5px;
+}
+
+.command-help {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.command-runner {
+  flex-shrink: 0;
+  max-height: 58%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: auto;
+  margin: 6px 8px 8px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--bg-canvas);
+}
+
+.command-run-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.command-run-heading strong {
+  font-size: 12px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.command-run-heading small {
+  color: var(--muted);
+  font-size: 10px;
+  flex-shrink: 0;
+}
+
+.command-description {
+  font-size: 11px;
+  line-height: 1.55;
+  color: var(--muted);
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.command-source,
+.command-preview {
+  margin: 0;
+  border: 1px solid var(--border-soft);
+  background: var(--bg-surface);
+  border-radius: var(--radius-control);
+  padding: 7px 9px;
+  font: 11px/1.6 var(--font-mono);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 140px;
+  overflow: auto;
+  flex-shrink: 0;
+}
+
+.command-preview {
+  background: var(--term-bg);
+  border-color: var(--border);
+  border-left: 2px solid var(--blue);
+  color: var(--text);
+}
+
+.command-preview-label {
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--blue);
+}
+
+.command-runner > button {
+  font-size: 11.5px;
+  flex-shrink: 0;
+}
+
+.command-error {
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.command-panel-note {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 6px 10px;
+  font-size: 10.5px;
+  line-height: 1.5;
+  color: var(--muted);
+  border-top: 1px solid var(--border-soft);
+}

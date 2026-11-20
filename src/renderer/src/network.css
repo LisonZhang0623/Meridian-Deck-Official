@@ -1,0 +1,133 @@
+.network-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+}
+
+.network-new-toggle {
+  padding: 2px 7px;
+  font-size: 10.5px;
+  min-height: 22px;
+}
+
+.network-new-toggle.active {
+  background: var(--highlight);
+  color: var(--blue);
+}
+
+.network-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.network-form {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--bg-canvas);
+}
+
+.network-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.network-form input,
+.network-form select {
+  width: 100%;
+  font-size: 11.5px;
+  padding: 5px 8px;
+  color: var(--text);
+}
+
+.network-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.network-note {
+  font-size: 10.5px;
+  line-height: 1.55;
+  color: var(--muted);
+  margin: 0;
+}
+
+.network-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--bg-canvas);
+  padding: 10px 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.network-card header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.network-card header strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.network-card code {
+  font: 10.5px/1.6 var(--font-mono);
+  display: block;
+  padding: 5px 8px;
+  border-radius: var(--radius-control);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-soft);
+  overflow-wrap: anywhere;
+}
+
+.network-card p {
+  font-size: 10.5px;
+  line-height: 1.55;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.network-actions {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.network-actions button {
+  font-size: 11px;
+  min-height: 25px;
+  padding: 3px 8px;
+}
+
+.network-stop {
+  margin-left: auto;
+  color: var(--danger);
+}
+
+.network-footnote {
+  padding: 6px 10px;
+  border-top: 1px solid var(--border-soft);
+  font-size: 10.5px;
+  color: var(--muted);
+  flex-shrink: 0;
+}

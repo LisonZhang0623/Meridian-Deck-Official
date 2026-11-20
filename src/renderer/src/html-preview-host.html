@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' data:; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; frame-src 'none'; form-action 'none'; base-uri 'none'; object-src 'none'">
+  <title>交互 HTML 预览</title>
+  <style>html, body, iframe { margin: 0; width: 100%; height: 100%; border: 0; display: block; }</style>
+</head>
+<body>
+  <iframe sandbox="allow-scripts" referrerpolicy="no-referrer" title="网页内容"></iframe>
+  <script>
+    // Only the workbench supplies a document. The document runs in its own opaque frame.
+    function receive(event) {
+      if (window.parent === window || event.source !== window.parent ||
+          event.data?.type !== 'meridian-html-preview' || typeof event.data.html !== 'string') return
+      window.removeEventListener('message', receive)
+      document.querySelector('iframe').srcdoc = event.data.html
+    }
+    window.addEventListener('message', receive)
+  </script>
+</body>
+</html>
