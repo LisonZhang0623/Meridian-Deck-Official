@@ -141,6 +141,7 @@ func sshTestNewSigner(t *testing.T) ssh.Signer {
 }
 
 type sshToolsFixture struct {
+	loginShell      string
 	listener        net.Listener
 	signer          *sshTestSigner
 	handlers        sftp.Handlers
@@ -321,6 +322,10 @@ func (f *sshToolsFixture) session(channel ssh.Channel, requests <-chan *ssh.Requ
 			_ = ssh.Unmarshal(request.Payload, &value)
 			_ = request.Reply(true, nil)
 			switch {
+			case value.Command == osc7ShellProbe && f.loginShell != "":
+				go func() { _, _ = io.WriteString(channel, "/bin/"+f.loginShell+"\x00/\x00"); sshTestExit(channel, 0) }()
+			case value.Command == osc7ZshDirProbe && f.loginShell == "zsh":
+				go func() { _, _ = io.WriteString(channel, "/custom"); sshTestExit(channel, 0) }()
 			case value.Command == GPUCommand:
 				if f.pauseOnGPU.Load() {
 					f.pauseReads.Store(true)

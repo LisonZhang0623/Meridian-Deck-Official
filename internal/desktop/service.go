@@ -276,6 +276,19 @@ func (s *Service) call(op string, args []json.RawMessage) (any, error) {
 		}
 	}
 	switch op {
+	case "terminal:osc7Check":
+		if err := decode(args, &id); err != nil {
+			return nil, err
+		}
+		return s.files.OSC7(id, "")
+	case "terminal:osc7Configure":
+		if err := decode(args, &id, &a); err != nil {
+			return nil, err
+		}
+		if a == "" {
+			return nil, errors.New("请先检查 Shell 配置路径")
+		}
+		return s.files.OSC7(id, a)
 	case "config:import", "config:export":
 		return s.callConfig(op, args)
 	case "window:editor":

@@ -56,6 +56,8 @@ export function createWailsApi(runtime: WailsRuntime, windows = /Windows/i.test(
     openUpdateRelease: url => invoke('updates:open', url),
     saveProfile: (profile, credentials) => invoke('profile:save', profile, credentials),
     deleteProfile: id => invoke('profile:delete', id),
+    checkOsc7: id => invoke('terminal:osc7Check', id),
+    configureOsc7: (id, path) => invoke('terminal:osc7Configure', id, path),
     saveSettings: settings => invoke('settings:save', settings),
     selectKey: () => invoke('key:select'),
     connect: (id, profile, credentials, jump, expected) => invoke('ssh:connect', id, profile, credentials, jump || {}, ...(expected === undefined ? [] : [expected])),

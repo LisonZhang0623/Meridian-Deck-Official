@@ -68,7 +68,11 @@ export type AppEvent =
   | { type: 'hostkey'; sessionId: string; host: string; fingerprint: string; previous?: string; keyType: string }
   | { type: 'transfer'; transfer: Transfer }
 export type Result<T> = { ok: true; value: T } | { ok: false; error: string; code?: string }
+export interface OSC7Status { shell: string; path?: string; configured: boolean }
+
 export interface Api {
+  checkOsc7?(sessionId: string): Promise<Result<OSC7Status>>
+  configureOsc7?(sessionId: string, path: string): Promise<Result<OSC7Status>>
   nativeFileDrop?: boolean
   nativeDragDownload?: boolean
   terminalConsumer?(sessionId: string, attached: boolean): void

@@ -21,7 +21,10 @@ import (
 const TextLimit = 2 * 1024 * 1024
 const ImageLimit = 20 * 1024 * 1024
 
-type Files struct{ conns Connections }
+type Files struct {
+	conns  Connections
+	osc7Mu sync.Mutex
+}
 
 func NewFiles(conns Connections) *Files { return &Files{conns: conns} }
 

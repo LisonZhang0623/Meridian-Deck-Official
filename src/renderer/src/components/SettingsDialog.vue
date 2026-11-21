@@ -74,6 +74,7 @@ async function save(): Promise<void> {
           <div class="font-sample" :style="{ fontSize: preferences.terminalFontSize + 'px' }">终端字号预览</div>
           <div class="font-sample" :style="{ fontSize: preferences.editorFontSize + 'px' }">编辑器字号预览</div>
         </fieldset>
+        <slot />
         <fieldset v-if="checkUpdateAvailable" :disabled="saving">
           <legend>软件更新</legend>
           <label class="check"><input v-model="preferences.checkUpdatesOnStartup" type="checkbox">启动时检查更新</label>

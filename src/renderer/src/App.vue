@@ -41,6 +41,7 @@ import { uploadFolder, downloadFolder, removeRemoteTree } from './file-actions'
 import { useTerminalLayout } from './terminal-layout'
 import { logTargets } from './logTargets'
 import TransferPanel from './components/TransferPanel.vue'
+import { useOsc7Setup } from './osc7-setup'
 import { state, active, selectedProfile, currentDocument, workspaceRequest, saveProfile, initialize, attempt, unwrap, notify, requestConnection, closeSession, closeSessions, newTerminal, renameSession, sessionTooltip, openDirectoryTerminal, openTmuxTerminal, requestDragDownload, confirmTransfer, loadDirectory, enterDirectory, refreshFileTree, navigate, jumpToTerminalDirectory, parentPath, openFile, closeDocument, closeDocuments, setLayout, phaseLabels, answerHostKey, sizeLabel, type DocumentTab, type Workspace } from './workbench'
 import { useFileTreeRefresh } from './file-tree-refresh'
 import { connectionIdentity } from '../../shared/connection'
@@ -63,6 +64,7 @@ function toggleWindowSize() {
 }
 const api = window.sshTool
 const settingsDialogOpen = ref(false)
+const { supported: osc7Supported, status: osc7Status, installing: osc7Installing, error: osc7Error, info: osc7Info, offer: offerOsc7, canConfigure: canConfigureOsc7, configure: configureOsc7, dismiss: dismissOsc7, retry: retryOsc7 } = useOsc7Setup(settingsDialogOpen)
 const updateDialogOpen = ref(false), updateChecking = ref(false), updateOpenError = ref('')
 const updateError = ref<{ message: string; code?: string } | null>(null)
 const updateRelease = ref<UpdateRelease | null>(null)
@@ -620,6 +622,7 @@ function nativeDrop(event: Event): void {
           <section v-for="session in state.sessions" v-show="session.id === state.activeId || inSplit(session)" :key="session.id" class="session-workspace" :data-terminal-session="session.id" :class="{ 'split-pane': inSplit(session), 'split-first': shownSplit?.first === session.id, 'split-second': shownSplit?.second === session.id, 'split-active': inSplit(session) && session.id === state.activeId }" @focusin="focusPane(session)">
             <button v-if="inSplit(session)" class="split-pane-label" type="button" :aria-pressed="session.id === state.activeId" :title="sessionTooltip(session)" @click="focusPane(session)"><strong>{{ session.name }}</strong><span>{{ session.endpoint }}</span></button>
             <div v-if="session.phase === 'disconnected' || session.phase === 'failed'" class="connection-banner" :class="{ error: session.phase === 'failed' }"><AlertTriangle :size="16"/><div><strong>{{ session.message }}</strong><small v-if="connectionChanged(session)">连接配置已修改，将在新标签中连接。</small></div><button @click="reconnect(session)">{{ connectionChanged(session) ? '在新标签连接' : '重试连接' }}</button></div>
+            <div v-if="session.id === state.activeId && offerOsc7" class="connection-banner" role="status"><div><strong>配置终端目录上报（OSC 7）？</strong><small>{{ osc7Error || `尚未收到 OSC 7 目录上报。配置将写入 ${osc7Info?.path}` }}</small></div><button :disabled="osc7Installing" @click="configureOsc7">自动配置</button><button :disabled="osc7Installing" @click="dismissOsc7">不再提示</button></div>
             <div v-if="busy(session)" class="connection-progress"><LoaderCircle :size="15" class="spin"/><span>{{ session.message }}</span><button v-if="session.phase === 'verifying'" @click="trustDialog?.showModal()">查看指纹</button></div>
             <div class="pane-container"><TerminalPane v-show="session.activeDocument === 'terminal' || inSplit(session)" :session="session" :active="session.id === state.activeId && session.activeDocument === 'terminal'" :visible="inSplit(session) || session.id === state.activeId && session.activeDocument === 'terminal'" :dark="dark" :font-size="state.settings.terminalFontSize"/><EditorPane v-for="doc in session.documents" v-show="session.activeDocument === doc.path && !inSplit(session)" :key="doc.path" :session="session" :doc="doc" :dark="dark"/></div>
           </section>
@@ -658,7 +661,13 @@ function nativeDrop(event: Event): void {
     <EnvironmentDialog v-if="environmentSession" :session="environmentSession" @close="environmentSession = undefined" />
     <FileSyncDialog v-if="syncTarget" :session="syncTarget.session" :directory="syncTarget.directory" @close="syncTarget = null" />
     <ConfirmationDialog v-if="pendingConfirmation" :request="pendingConfirmation" @resolve="resolveConfirmation" />
-    <SettingsDialog v-if="settingsDialogOpen" @close="settingsDialogOpen = false" />
+    <SettingsDialog v-if="settingsDialogOpen" @close="settingsDialogOpen = false">
+      <fieldset v-if="osc7Supported"><legend>当前服务器 · OSC 7 目录上报</legend>
+        <small role="status">{{ osc7Status }}</small>
+        <button v-if="canConfigureOsc7" type="button" :disabled="osc7Installing" @click="configureOsc7">一键配置 OSC 7</button>
+        <button v-else-if="osc7Error" type="button" @click="retryOsc7">重新检查</button>
+      </fieldset>
+    </SettingsDialog>
     <TerminalSplitDialog v-if="splitChoice" :key="splitChoice.source.id + splitChoice.direction" :source="splitChoice.source" :direction="splitChoice.direction" :targets="splitTargets" :can-create="canCreateSplit" :busy="splitBusy" :confirm="confirmSplit" @close="closeSplitChoice"/>
     <UpdateDialog v-if="updateDialogOpen" :version="version" :release="updateRelease" :checking="updateChecking" :error="updateError" :open-error="updateOpenError" :can-open="!!api.openUpdateRelease" @retry="checkUpdate()" @open="openUpdatePage" @close="updateDialogOpen = false"/>
     <dialog ref="trustDialog" class="trust-dialog" @cancel.prevent="trust(false)"><header class="dialog-header"><div><h2>{{ state.trust[0]?.previous ? '服务器指纹发生变化' : '确认服务器身份' }}</h2><p>核对服务器指纹后再继续连接。</p></div><ShieldCheck :size="24"/></header><div v-if="state.trust[0]" class="dialog-body"><p v-if="state.trust[0].previous" class="error-box">此服务器与上次保存的身份不一致。请向管理员核实密钥更换后再信任。</p><dl class="fingerprint-details"><dt>服务器</dt><dd>{{ state.trust[0].host }}</dd><dt>密钥类型</dt><dd>{{ state.trust[0].keyType }}</dd><template v-if="state.trust[0].previous"><dt>原指纹</dt><dd class="fingerprint">{{ state.trust[0].previous }}</dd></template><dt>当前指纹</dt><dd class="fingerprint">{{ state.trust[0].fingerprint }}</dd></dl></div><footer class="dialog-footer"><button :disabled="trustBusy" @click="trust(false)">取消连接</button><button :class="state.trust[0]?.previous ? 'danger-button' : 'primary'" :disabled="trustBusy" @click="trust(true)">{{ state.trust[0]?.previous ? '替换并信任' : '信任并继续' }}</button></footer></dialog>
