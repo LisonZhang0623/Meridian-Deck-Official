@@ -24,6 +24,12 @@
   <a href="#文档与反馈">问题反馈</a>
 </p>
 
+## 工作台预览
+
+![子午线工作台中运行 SSH 命令、从 SFTP 文件树打开 Markdown 分栏预览，并查看 GPU 状态](assets/meridian-deck-preview.gif)
+
+动图使用本机回环 SSH 服务，实验文件和显卡指标均为演示数据。
+
 ## 下载
 
 **1.0.0 正式版**支持拖出与收回文件预览、离线 Markdown 数学公式、交互网页和两套启动动画。可从下表下载安装包，或查看[正式版说明](https://github.com/LisonZhang0623/Meridian-Deck-Official/releases/tag/v1.0.0)。
