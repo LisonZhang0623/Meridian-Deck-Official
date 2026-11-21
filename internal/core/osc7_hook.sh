@@ -7,7 +7,11 @@ if [[ $- == *i* ]]; then
             rest=${rest#?}
             case "$ch" in
                 [a-zA-Z0-9._~/-]) escaped+="$ch" ;;
-                *) printf -v byte '%%%02X' "'$ch"; escaped+="$byte" ;;
+                *)
+                    # Older Bash versions sign-extend non-ASCII bytes.
+                    printf -v byte '%d' "'$ch"
+                    printf -v byte '%%%02X' "$((byte & 255))"
+                    escaped+="$byte" ;;
             esac
         done
         printf '\033]7;file://%s\033\\' "$escaped"
