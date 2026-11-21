@@ -57,6 +57,7 @@ export function createWailsApi(runtime: WailsRuntime, windows = /Windows/i.test(
     saveProfile: (profile, credentials) => invoke('profile:save', profile, credentials),
     deleteProfile: id => invoke('profile:delete', id),
     checkOsc7: id => invoke('terminal:osc7Check', id),
+    prepareOsc7: (id, path) => invoke('terminal:osc7Prepare', id, path),
     configureOsc7: (id, path) => invoke('terminal:osc7Configure', id, path),
     saveSettings: settings => invoke('settings:save', settings),
     selectKey: () => invoke('key:select'),

@@ -4,7 +4,7 @@ import { Terminal } from '@xterm/xterm'
 import { FitAddon } from '@xterm/addon-fit'
 import { SearchAddon } from '@xterm/addon-search'
 import { ChevronUp, ChevronDown, X } from '@lucide/vue'
-import { state, type Workspace } from '../workbench'
+import { state, sendTerminalInput, type Workspace } from '../workbench'
 import { terminalDirectory } from '../terminal-directory'
 import { terminalTheme } from '../terminal-theme'
 import '@xterm/xterm/css/xterm.css'
@@ -85,7 +85,22 @@ onMounted(() => {
     return true
   })
   for (const [index, data] of history.entries()) terminal.write(bytes(data), index === history.length - 1 ? () => { replaying = false } : undefined)
-  terminal.onData(data => { if (props.session.id === sessionId && props.session.phase === 'connected') window.sshTool.terminalInput(sessionId, data) })
+  let promptEnd: { row: number; col: number } | undefined
+  terminal.parser.registerOscHandler(133, data => {
+    const b = terminal.buffer.active
+    promptEnd = data.split(';')[0] === 'B' ? { row: b.baseY + b.cursorY, col: b.cursorX } : undefined
+    return false
+  })
+  terminal.onWriteParsed(() => {
+    if (props.session.id !== sessionId || replaying) return
+    const b = terminal.buffer.active, row = b.baseY + b.cursorY, line = b.getLine(row)
+    const prefix = line?.translateToString(true, 0, b.cursorX) ?? ''
+    const marked = promptEnd?.row === row && promptEnd.col === b.cursorX
+    props.session.terminalAtPrompt = b.type === 'normal' && !!line && !line.translateToString(true, b.cursorX) &&
+      (marked || /[$#%❯➜]$/.test(prefix.trimEnd()))
+  })
+  terminal.buffer.onBufferChange(buffer => { if (props.session.id === sessionId) props.session.terminalAlternate = buffer.type === 'alternate' })
+  terminal.onData(data => { if (props.session.id === sessionId && props.session.phase === 'connected') sendTerminalInput(props.session, data) })
   terminal.onResize(({ cols, rows }) => window.sshTool.terminalResize(sessionId, cols, rows))
   terminal.attachCustomKeyEventHandler(event => {
     if (isSearchShortcut(event) && !event.isComposing) {

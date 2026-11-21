@@ -83,6 +83,41 @@ func createOSC7Config(c *sftp.Client, remote string) error {
 	return c.Rename(tmp, remote)
 }
 
+// PrepareOSC7 creates the same hook beside the rc file for explicit loading in a
+// running shell. Sourcing just this file preserves the rest of the session.
+func (f *Files) PrepareOSC7(id, expectedPath string) (OSC7Status, error) {
+	if expectedPath == "" {
+		return OSC7Status{}, errors.New("请先检查 Shell 配置路径")
+	}
+	status, err := f.OSC7(id, expectedPath)
+	if err != nil {
+		return status, err
+	}
+	helper := path.Join(path.Dir(status.Path), ".meridian-osc7-v1.sh")
+	c, err := f.client(id, helper)
+	if err != nil {
+		return status, err
+	}
+	info, err := c.Lstat(helper)
+	if os.IsNotExist(err) {
+		if err = createOSC7Config(c, helper); err == nil {
+			return status, nil
+		}
+		// Another session may have published the same file concurrently.
+		info, err = c.Lstat(helper)
+	}
+	if err != nil {
+		return status, err
+	}
+	if info.Mode().IsRegular() && info.Size() == int64(len(osc7Hook)) {
+		doc, err := f.Preview(id, helper)
+		if err == nil && doc.Content == osc7Hook {
+			return status, nil
+		}
+	}
+	return status, errors.New("启动配置已保存。当前目录里的 .meridian-osc7-v1.sh 内容不同，请检查后再启用")
+}
+
 // A check only reads. An install must name the same startup file the UI showed.
 func (f *Files) OSC7(id, expectedPath string) (OSC7Status, error) {
 	status, err := f.osc7Target(id)

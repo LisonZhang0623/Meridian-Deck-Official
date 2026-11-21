@@ -64,7 +64,7 @@ function toggleWindowSize() {
 }
 const api = window.sshTool
 const settingsDialogOpen = ref(false)
-const { supported: osc7Supported, status: osc7Status, installing: osc7Installing, error: osc7Error, info: osc7Info, offer: offerOsc7, canConfigure: canConfigureOsc7, configure: configureOsc7, dismiss: dismissOsc7, retry: retryOsc7 } = useOsc7Setup(settingsDialogOpen)
+const { supported: osc7Supported, status: osc7Status, installing: osc7Installing, error: osc7Error, info: osc7Info, offer: offerOsc7, canConfigure: canConfigureOsc7, canEnable: canEnableOsc7, atPrompt: osc7AtPrompt, manualCommand: osc7ManualCommand, configure: configureOsc7, dismiss: dismissOsc7, retry: retryOsc7 } = useOsc7Setup(settingsDialogOpen)
 const updateDialogOpen = ref(false), updateChecking = ref(false), updateOpenError = ref('')
 const updateError = ref<{ message: string; code?: string } | null>(null)
 const updateRelease = ref<UpdateRelease | null>(null)
@@ -622,7 +622,7 @@ function nativeDrop(event: Event): void {
           <section v-for="session in state.sessions" v-show="session.id === state.activeId || inSplit(session)" :key="session.id" class="session-workspace" :data-terminal-session="session.id" :class="{ 'split-pane': inSplit(session), 'split-first': shownSplit?.first === session.id, 'split-second': shownSplit?.second === session.id, 'split-active': inSplit(session) && session.id === state.activeId }" @focusin="focusPane(session)">
             <button v-if="inSplit(session)" class="split-pane-label" type="button" :aria-pressed="session.id === state.activeId" :title="sessionTooltip(session)" @click="focusPane(session)"><strong>{{ session.name }}</strong><span>{{ session.endpoint }}</span></button>
             <div v-if="session.phase === 'disconnected' || session.phase === 'failed'" class="connection-banner" :class="{ error: session.phase === 'failed' }"><AlertTriangle :size="16"/><div><strong>{{ session.message }}</strong><small v-if="connectionChanged(session)">连接配置已修改，将在新标签中连接。</small></div><button @click="reconnect(session)">{{ connectionChanged(session) ? '在新标签连接' : '重试连接' }}</button></div>
-            <div v-if="session.id === state.activeId && offerOsc7" class="connection-banner" role="status"><div><strong>配置终端目录上报（OSC 7）？</strong><small>{{ osc7Error || `尚未收到 OSC 7 目录上报。配置将写入 ${osc7Info?.path}` }}</small></div><button :disabled="osc7Installing" @click="configureOsc7">自动配置</button><button :disabled="osc7Installing" @click="dismissOsc7">不再提示</button></div>
+            <div v-if="session.id === state.activeId && offerOsc7" class="connection-banner" role="status"><div><strong>终端目录上报（OSC 7）</strong><small>{{ osc7Error || (canConfigureOsc7 ? `配置将写入 ${osc7Info?.path}。请在空白 Shell 提示符启用。` : osc7Status) }}</small><code v-if="osc7ManualCommand">{{ osc7ManualCommand }}</code></div><button v-if="osc7AtPrompt || !osc7ManualCommand" :disabled="osc7Installing" @click="configureOsc7(true)">{{ osc7AtPrompt ? (canConfigureOsc7 ? '配置并在当前终端启用' : '在当前终端启用') : '准备启用命令' }}</button><button v-if="canConfigureOsc7" :disabled="osc7Installing" @click="configureOsc7(false)">仅保存配置</button><button :disabled="osc7Installing" @click="dismissOsc7">不再提示</button></div>
             <div v-if="busy(session)" class="connection-progress"><LoaderCircle :size="15" class="spin"/><span>{{ session.message }}</span><button v-if="session.phase === 'verifying'" @click="trustDialog?.showModal()">查看指纹</button></div>
             <div class="pane-container"><TerminalPane v-show="session.activeDocument === 'terminal' || inSplit(session)" :session="session" :active="session.id === state.activeId && session.activeDocument === 'terminal'" :visible="inSplit(session) || session.id === state.activeId && session.activeDocument === 'terminal'" :dark="dark" :font-size="state.settings.terminalFontSize"/><EditorPane v-for="doc in session.documents" v-show="session.activeDocument === doc.path && !inSplit(session)" :key="doc.path" :session="session" :doc="doc" :dark="dark"/></div>
           </section>
@@ -664,7 +664,9 @@ function nativeDrop(event: Event): void {
     <SettingsDialog v-if="settingsDialogOpen" @close="settingsDialogOpen = false">
       <fieldset v-if="osc7Supported"><legend>当前服务器 · OSC 7 目录上报</legend>
         <small role="status">{{ osc7Status }}</small>
-        <button v-if="canConfigureOsc7" type="button" :disabled="osc7Installing" @click="configureOsc7">一键配置 OSC 7</button>
+        <code v-if="osc7ManualCommand">{{ osc7ManualCommand }}</code>
+        <button v-if="(canConfigureOsc7 || canEnableOsc7) && (osc7AtPrompt || !osc7ManualCommand)" type="button" :disabled="osc7Installing" @click="configureOsc7(true)">{{ osc7AtPrompt ? (canConfigureOsc7 ? '配置并在当前终端启用' : '在当前终端启用') : '准备启用命令' }}</button>
+        <button v-if="canConfigureOsc7" type="button" :disabled="osc7Installing" @click="configureOsc7(false)">仅保存配置</button>
         <button v-else-if="osc7Error" type="button" @click="retryOsc7">重新检查</button>
       </fieldset>
     </SettingsDialog>

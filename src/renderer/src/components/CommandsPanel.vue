@@ -3,7 +3,7 @@ import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { Bookmark, Check, Pencil, Play, Plus, Search, Trash2, X } from '@lucide/vue'
 import type { CommandSnippet } from '../../../shared/v2'
 import { connectionIdentity } from '../../../shared/connection'
-import { active, selectedProfile, state, notify, unwrap } from '../workbench'
+import { active, selectedProfile, state, notify, sendTerminalInput, unwrap } from '../workbench'
 import { confirmAction } from '../confirmation'
 import '../commands.css'
 
@@ -83,7 +83,7 @@ async function preview(): Promise<void> {
 function execute(): void {
   if (!canExecute.value || busy.value) return
   const session = active.value!
-  api.terminalInput(session.id, previewText.value.replace(/\r?\n/g, '\r') + '\r')
+  sendTerminalInput(session, previewText.value.replace(/\r?\n/g, '\r') + '\r')
   session.activeDocument = 'terminal'
   previewText.value = ''; previewTarget = undefined
   notify(`命令已发送到“${session.name}”的当前终端`)

@@ -72,6 +72,7 @@ export interface OSC7Status { shell: string; path?: string; configured: boolean 
 
 export interface Api {
   checkOsc7?(sessionId: string): Promise<Result<OSC7Status>>
+  prepareOsc7?(sessionId: string, path: string): Promise<Result<OSC7Status>>
   configureOsc7?(sessionId: string, path: string): Promise<Result<OSC7Status>>
   nativeFileDrop?: boolean
   nativeDragDownload?: boolean

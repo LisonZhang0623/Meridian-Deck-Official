@@ -281,12 +281,15 @@ func (s *Service) call(op string, args []json.RawMessage) (any, error) {
 			return nil, err
 		}
 		return s.files.OSC7(id, "")
-	case "terminal:osc7Configure":
+	case "terminal:osc7Configure", "terminal:osc7Prepare":
 		if err := decode(args, &id, &a); err != nil {
 			return nil, err
 		}
 		if a == "" {
 			return nil, errors.New("请先检查 Shell 配置路径")
+		}
+		if op == "terminal:osc7Prepare" {
+			return s.files.PrepareOSC7(id, a)
 		}
 		return s.files.OSC7(id, a)
 	case "config:import", "config:export":

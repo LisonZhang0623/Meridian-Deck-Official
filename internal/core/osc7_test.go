@@ -4,6 +4,7 @@ import (
 	"golang.org/x/crypto/ssh"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -34,10 +35,33 @@ func TestOSC7ShellHook(t *testing.T) {
 				before = "precmd_functions=(existing_hook)\n"
 				verify = `[[ ${precmd_functions[*]} = 'existing_hook __meridian_report_directory' ]] || exit 42`
 			}
+			// Feed input to one already-running interactive shell. Its own prompt hooks
+			// must report both directories without explicitly calling the reporter.
+			dir := t.TempDir()
+			if err := os.WriteFile(filepath.Join(dir, ".meridian-osc7-v1.sh"), []byte(osc7Hook), 0600); err != nil {
+				t.Fatal(err)
+			}
+			if err := os.Mkdir(filepath.Join(dir, "changed"), 0700); err != nil {
+				t.Fatal(err)
+			}
+			live := exec.Command(shell, args[:len(args)-1]...)
+			live.Dir = dir
+			live.Env = append(os.Environ(), "TERM=dumb", "ZDOTDIR="+dir)
+			source := `builtin source "$HOME/.meridian-osc7-v1.sh"`
+			if name == "zsh" {
+				source = `builtin source "${ZDOTDIR:-$HOME}/.meridian-osc7-v1.sh"`
+			}
+			live.Stdin = strings.NewReader("HOME=$PWD; ZDOTDIR=$PWD; keep=session\n " + source + "\ncd changed\ntest \"$keep\" = session || exit 44\nexit\n")
+			output, err := live.CombinedOutput()
+			frames := strings.Split(string(output), "\x1b]7;file://")
+			if err != nil || len(frames) < 3 || !strings.Contains(frames[2], "/changed\x1b\\") {
+				t.Fatalf("current shell failed to follow cd: %v %q", err, output)
+			}
+
 			script := before + osc7Hook + "\n" + osc7Hook + "\n" + verify + "\nPWD='/lab/实验 #%'\n__meridian_report_directory"
 			command := exec.Command(shell, append(args, script)...)
 			command.Env = append(os.Environ(), "ZDOTDIR="+t.TempDir(), "TERM=xterm-256color")
-			output, err := command.Output()
+			output, err = command.Output()
 			if err != nil {
 				t.Fatalf("hook failed: %v %s", err, output)
 			}
@@ -118,6 +142,25 @@ func TestOSC7Loopback(t *testing.T) {
 			}
 			if shell == "bash" && !strings.HasPrefix(doc.Content, original+"\n") {
 				t.Fatal("existing shell config was modified")
+			}
+			helper := path.Join(path.Dir(target), ".meridian-osc7-v1.sh")
+			if _, err := client.Lstat(helper); !os.IsNotExist(err) {
+				t.Fatalf("save-only created a helper: %v", err)
+			}
+			for range 2 {
+				if _, err := files.PrepareOSC7("first", target); err != nil {
+					t.Fatal(err)
+				}
+			}
+			hook, err := files.Preview("first", helper)
+			if err != nil || hook.Content != osc7Hook {
+				t.Fatalf("live hook differs: %v", err)
+			}
+			if _, err := files.Save("first", helper, "# custom", hook.Version); err != nil {
+				t.Fatal(err)
+			}
+			if _, err := files.PrepareOSC7("first", target); err == nil {
+				t.Fatal("accepted a modified helper")
 			}
 			tampered := strings.Replace(doc.Content, "printf -v byte", "# custom edit", 1)
 			if _, err = files.Save("first", target, tampered, doc.Version); err != nil {

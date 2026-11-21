@@ -12,6 +12,7 @@ export interface Workspace {
   sftpError?: string; activeDocument: string; documents: DocumentTab[]; tree: Record<string, RemoteEntry[]>
   expanded: Set<string>; loading: Set<string>; terminalBuffer: string[]; terminalBytes: number
   terminalDirectory?: string; tmuxName?: string
+  terminalInputRevision?: number; terminalInputPending?: boolean; terminalAlternate?: boolean; terminalAtPrompt?: boolean
 }
 export const state = reactive({
   profiles: [] as Profile[], settings: { ...DEFAULT_SETTINGS },
@@ -30,6 +31,13 @@ export function dismissCompletedTransfers(id?: string): void {
     dismissedTransferIds.add(transfer.id)
     return false
   })
+}
+
+export function sendTerminalInput(session: Workspace, data: string): void {
+  session.terminalInputRevision = (session.terminalInputRevision ?? 0) + 1
+  session.terminalInputPending = !/[\r\n\x03\x15]$/.test(data)
+  session.terminalAtPrompt = false
+  window.sshTool.terminalInput(session.id, data)
 }
 
 export function workspaceRequest(session: Workspace) {
@@ -304,6 +312,10 @@ export async function connect(profile: Profile, credentials: Credentials, reconn
     session.loading.clear()
     session.sftpError = undefined
     session.terminalDirectory = undefined
+    session.terminalInputRevision = 0
+    session.terminalInputPending = false
+    session.terminalAlternate = false
+    session.terminalAtPrompt = false
     for (const doc of session.documents) doc.busy = false
   }
   session.tmuxName = tmuxName
